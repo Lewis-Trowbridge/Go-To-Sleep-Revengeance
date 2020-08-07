@@ -136,6 +136,8 @@ async def register(ctx):
             sleepycursor.execute("UPDATE sleep_tracker SET area_id=?, server_id=? WHERE user_id = ?", (area_id, ctx.message.guild.id, ctx.author.id))
         sleepydb.commit()
         await ctx.send("You are now registered at "+name+". I'll now message you in this server.")
+    else:
+        await ctx.send("Sorry, something went wrong - please try again.")
 
 
 async def new_location(name, latlong):
