@@ -342,21 +342,6 @@ async def go_to_sleep(members_to_ping, channel_id):
 
 
 @sleepingbot.command(pass_context=True)
-async def goodbye(ctx):
-    try:
-        with open("./goodbye.txt", "r") as goodbye_message:
-            goodbye_text = goodbye_message.read()
-    # If the user hasn't set this up, don't crash the bot
-    except FileNotFoundError:
-        return
-    app_info = await sleepingbot.application_info()
-    if ctx.message.author == app_info.owner:
-        for channel_id in sleepycursor.execute("SELECT channel_id FROM server_linked_channels").fetchall():
-            channel_to_message = sleepingbot.get_channel(channel_id[0])
-            if channel_to_message is not None:
-                await channel_to_message.send(goodbye_text)
-
-@sleepingbot.command(pass_context=True)
 async def support(ctx):
 
     """

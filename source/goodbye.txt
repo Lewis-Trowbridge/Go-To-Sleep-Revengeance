@@ -1,6 +1,0 @@
-So you may or may not know about this: https://blog.discord.com/the-future-of-bots-on-discord-4e6e050ab52e
-TLDR, it means that from tomorrow onwards, the bot may break, and there will be nothing I can do about it.
-Basically, what's important is from tomorrow the bot won't be able to access your profile information, which means it won't be able to tag you and will likely crash, unless I become a verified developer - this isn't possible at the moment however, as I don't have a bot in over 100 servers. That might change in the future, but to set your expectations, don't hold your breath.
-So, to keep this message from being any longer, thanks for your support with the bot, and remember, your sleep is still important even if this bot isn't reminding you all of the time.
-
-- Lewis, the developer
