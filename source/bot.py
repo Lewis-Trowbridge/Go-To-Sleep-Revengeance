@@ -137,7 +137,7 @@ async def register(ctx):
         sleepydb.commit()
         await ctx.send("You are now registered at "+name+". I'll now message you in this server.")
     else:
-        await ctx.send("Sorry, something went wrong - please try again.")
+        await ctx.send("Sorry, something went wrong - have you tried typing your location? Check the help command for more details!")
 
 
 async def new_location(name, latlong):
