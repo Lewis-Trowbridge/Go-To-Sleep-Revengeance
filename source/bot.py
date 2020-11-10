@@ -37,7 +37,12 @@ handler = logging.FileHandler("./logs/gotosleeplog-"+datetime.datetime.now().str
 handler.setFormatter(logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s"))
 logger.addHandler(handler)
 
-sleepingbot = commands.Bot("s!")
+# Adding intents to access user data
+intents = discord.Intents.default()
+intents.members = True
+intents.presences = True
+
+sleepingbot = commands.Bot("s!", intents=intents)
 
 
 @sleepingbot.event
