@@ -32,7 +32,7 @@ sleepydb = sqlite3.connect("../sleepy.db")
 sleepycursor = sleepydb.cursor()
 
 logger = logging.getLogger("discord")
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.ERROR)
 handler = logging.FileHandler("./logs/gotosleeplog-"+datetime.datetime.now().strftime("%d-%m-%Y-%H-%M-%S")+".txt", "w", "utf-8")
 handler.setFormatter(logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s"))
 logger.addHandler(handler)
