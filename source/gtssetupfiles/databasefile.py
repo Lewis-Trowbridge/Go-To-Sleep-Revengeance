@@ -14,6 +14,7 @@ def checkdatabase():
             area_id INTEGER,
             server_id INTEGER,
             bedtime_offset INTEGER DEFAULT 0,
+            aggressive_ping INTEGER DEFAULT 0,
             FOREIGN KEY (area_id) REFERENCES area_cache(area_id),
             FOREIGN KEY (server_id) REFERENCES server_linked_channels(server_id)
             );""")

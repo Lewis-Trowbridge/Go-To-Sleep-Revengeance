@@ -185,6 +185,26 @@ async def unregister(ctx):
 
 
 @sleepingbot.command(pass_context=True)
+async def pingaggressively(ctx):
+    """
+    Changes ping settings!
+
+    Allows you to tell me whether to ping you when idle/do not disturb. Use this whenever you want to change how I'm currently
+    treating this!
+
+    Usage: s!pingaggressively
+    """
+
+    if sleepycursor.execute("SELECT user_id FROM sleep_tracker WHERE user_id=?", (ctx.author.id,)).fetchone() is not None:
+        current_state = sleepycursor.execute("SELECT aggressive_ping FROM sleep_tracker WHERE user_id=?", (ctx.author.id,)).fetchone()[0]
+        current_state_bool = not bool(current_state)
+        sleepycursor.execute("UPDATE sleep_tracker SET aggressive_ping = ? WHERE user_id = ?", (int(current_state_bool), ctx.author.id))
+        sleepydb.commit()
+        await ctx.send("Okay, all done!")
+
+
+
+@sleepingbot.command(pass_context=True)
 async def bedtime(ctx):
     """
     Sets a custom bedtime!
