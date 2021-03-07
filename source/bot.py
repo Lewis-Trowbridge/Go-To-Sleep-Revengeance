@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import logging
 import gtssetupfiles
+import gotosleep
 import json
 import sqlite3
 import googlemaps
@@ -26,7 +27,7 @@ with open("supportserver.json", "r") as support_server_file:
 gmaps = googlemaps.Client(google_token)
 ntpclient = ntplib.NTPClient()
 ntpserver = "time.google.com"
-ntpoffset = datetime.datetime.now()
+ntp_offset = datetime.datetime.now()
 
 sleepydb = sqlite3.connect("../sleepy.db")
 sleepycursor = sleepydb.cursor()
@@ -256,11 +257,11 @@ async def align_to_hour():
 
 
 async def align_to_minute():
-    global ntpoffset
+    global ntp_offset
     ntpresponse = ntpclient.request(ntpserver, version=3)
     ntptime = datetime.datetime.utcfromtimestamp(ntpresponse.tx_time)
     now = datetime.datetime.now()
-    ntpoffset = ntptime - now
+    ntp_offset = ntptime - now
     offsetfromnextminute = 60 - ntptime.second
     await async_sleep(offsetfromnextminute)
 
@@ -325,12 +326,7 @@ async def check_sleep():
                     lost_server_id = current_server_id
                     continue
 
-            time_in_timezone = (datetime.datetime.now() + ntpoffset + datetime.timedelta(seconds=utc_offset) + datetime.timedelta(
-                seconds=dst_offset))
-            bedtime_float = bedtime_offset / 3600
-            bedtime_hours = int(bedtime_float)
-            bedtime_minutes = round((bedtime_float - bedtime_hours) * 60)
-            if time_in_timezone.hour == bedtime_hours and time_in_timezone.minute == bedtime_minutes:
+            if gotosleep.is_bedtime(ntp_offset, utc_offset, dst_offset, bedtime_offset):
                 current_member = current_server.get_member(user_id)
                 if current_member is not None:
                     current_server_members.append(current_member)
