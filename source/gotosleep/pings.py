@@ -1,4 +1,5 @@
 import datetime
+import discord
 
 
 def is_bedtime(ntpoffset, utc_offset, dst_offset, bedtime_offset):
@@ -12,3 +13,7 @@ def is_bedtime(ntpoffset, utc_offset, dst_offset, bedtime_offset):
         return True
     else:
         return False
+
+
+def is_available(member_to_check: discord.Member, aggressive_pings: bool):
+    return member_to_check.status == discord.Status.online or aggressive_pings

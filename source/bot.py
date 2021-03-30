@@ -202,8 +202,8 @@ async def pingaggressively(ctx):
         sleepycursor.execute("UPDATE sleep_tracker SET aggressive_ping = ? WHERE user_id = ?", (int(current_state_bool), ctx.author.id))
         sleepydb.commit()
         await ctx.send("Okay, all done!")
-
-
+    else:
+        await ctx.send("Sorry, I'll need you to register first. Check s!help for more information!")
 
 @sleepingbot.command(pass_context=True)
 async def bedtime(ctx):
@@ -294,7 +294,7 @@ async def check_sleep():
         current_server_members = []
         current_channel_to_ping = 0
         lost_server_id = 0
-        user_info = sleepycursor.execute("""SELECT user_id, sleep_tracker.server_id, bedtime_offset, t.utc_offset, t.dst_offset, slc.channel_id FROM sleep_tracker
+        user_info = sleepycursor.execute("""SELECT user_id, sleep_tracker.server_id, bedtime_offset, aggressive_ping, t.utc_offset, t.dst_offset, slc.channel_id FROM sleep_tracker
     JOIN area_cache ac on sleep_tracker.area_id = ac.area_id
     JOIN timezones t on ac.timezone_id = t.timezone_id
     JOIN server_linked_channels slc on sleep_tracker.server_id = slc.server_id
@@ -303,13 +303,14 @@ async def check_sleep():
             server_id = user[1]
             if server_id == lost_server_id:     # If on this run we've removed a server ID, this will skip the remaining users who belong in that server
                 continue
-            channel_to_ping = user[5]
+            channel_to_ping = user[6]
             if channel_to_ping is None:     # If the user is part of a server with a problematic channel, this will skip them until the channel is corrected
                 continue                    # Since we only check if a channel is valid once every query, there is no need to track the ID, as the none value will be there the next time
             user_id = user[0]
             bedtime_offset = user[2]
-            utc_offset = user[3]
-            dst_offset = user[4]
+            aggressive_ping = bool(user[3])
+            utc_offset = user[4]
+            dst_offset = user[5]
             # If we've entered the range of users from a different server from the one we're looking at
             if server_id != current_server_id:
                 # Fire off the messages to users from the old server
@@ -329,7 +330,7 @@ async def check_sleep():
             if gotosleep.is_bedtime(ntp_offset, utc_offset, dst_offset, bedtime_offset):
                 current_member = current_server.get_member(user_id)
                 if current_member is not None:
-                    current_server_members.append(current_member)
+                    current_server_members.append((current_member, aggressive_ping))
                 else:   # If the user is none, that means they are inaccessible for some reason, and to err on the side of caution we remove them from the database
                     sleepycursor.execute("DELETE FROM sleep_tracker WHERE user_id=?", (user_id,))
                     sleepydb.commit()
@@ -343,11 +344,13 @@ async def go_to_sleep(members_to_ping, channel_id):
         well_done_string = ""
         channel_to_ping = sleepingbot.get_channel(channel_id)
         if channel_to_ping is not None:
-            for user_to_ping in members_to_ping:
-                if user_to_ping.status == discord.Status.online:    # If the user is online, add them to the list to be told to go to sleep.
-                    sleep_time_string += user_to_ping.mention + ", "
+            for member_data in members_to_ping:
+                member_to_ping = member_data[0]
+                ping_aggressively = member_data[1]
+                if gotosleep.is_available(member_to_ping, ping_aggressively):    # If the user is online, add them to the list to be told to go to sleep.
+                    sleep_time_string += member_to_ping.mention + ", "
                 else:   # If the user is not online, add them to the list to be congratulated for going to sleep.
-                    well_done_string += user_to_ping.name + ", "
+                    well_done_string += member_to_ping.name + ", "
             try:
                 if len(sleep_time_string) != 0:     # If there are any users that have to go to sleep, send the message.
                     await channel_to_ping.send(sleep_time_string + "it's time to go to sleep.")
