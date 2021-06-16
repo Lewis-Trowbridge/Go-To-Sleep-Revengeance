@@ -32,6 +32,19 @@ class TestArgParser(unittest.TestCase):
         self.assertEqual(all_args[2], str(result.db_path))
         self.assertEqual(all_args[4], str(result.log_dir))
 
+    def test_nonexistent_db_path(self):
+        false_db_path = "./notarealdb.db"
+        with self.assertRaises(FileNotFoundError):
+            all_args = [test_bot_token, test_maps_token, false_db_path, "--log-dir", test_log_path]
+            self.argparser.parse_args(all_args)
+    
+    def test_not_db_file(self):
+        not_a_db_file_path = "README.md"
+        with self.assertRaises(SystemExit):
+            all_args = [test_bot_token, test_maps_token, not_a_db_file_path, "--log-dir", test_log_path]
+            self.argparser.parse_args(all_args)
+        
+
 
     def tearDown(self) -> None:
         os.remove(test_db_path)
