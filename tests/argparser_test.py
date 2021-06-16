@@ -1,3 +1,4 @@
+import argparse
 import unittest
 import contextlib
 from io import StringIO
@@ -7,7 +8,7 @@ import os
 test_bot_token = "bottokenx"
 test_maps_token = "mapstokeny"
 test_db_path = "test_db.db"
-test_log_path = "/log-folder"
+test_log_path = "log-folder"
 
 class TestArgParser(unittest.TestCase):
     
@@ -44,6 +45,11 @@ class TestArgParser(unittest.TestCase):
             all_args = [test_bot_token, test_maps_token, not_a_db_file_path, "--log-dir", test_log_path]
             self.argparser.parse_args(all_args)
         
+    def test_default_log_dir(self):
+        default_log_path = "logs"
+        all_args = [test_bot_token, test_maps_token, test_db_path]
+        results = self.argparser.parse_args(all_args)
+        self.assertEqual(default_log_path, results.log_dir)
 
 
     def tearDown(self) -> None:
