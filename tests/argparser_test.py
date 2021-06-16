@@ -9,6 +9,7 @@ test_bot_token = "bottokenx"
 test_maps_token = "mapstokeny"
 test_db_path = "test_db.db"
 test_log_path = "log-folder"
+test_support_server = "invitelink"
 
 class TestArgParser(unittest.TestCase):
     
@@ -26,12 +27,13 @@ class TestArgParser(unittest.TestCase):
                 self.argparser.parse_args(help_args)
     
     def test_all_args(self):
-        all_args = [test_bot_token, test_maps_token, test_db_path, "--log-dir", test_log_path]
+        all_args = [test_bot_token, test_maps_token, test_db_path, "--log-dir", test_log_path, "--support-server", test_support_server]
         result = self.argparser.parse_args(all_args)
         self.assertEqual(all_args[0], result.bot_token)
         self.assertEqual(all_args[1], result.maps_token)
         self.assertEqual(all_args[2], str(result.db_path))
         self.assertEqual(all_args[4], str(result.log_dir))
+        self.assertEqual(all_args[6], result.support_server)
 
     def test_nonexistent_db_path(self):
         false_db_path = "./notarealdb.db"
@@ -50,6 +52,12 @@ class TestArgParser(unittest.TestCase):
         all_args = [test_bot_token, test_maps_token, test_db_path]
         results = self.argparser.parse_args(all_args)
         self.assertEqual(default_log_path, results.log_dir)
+    
+    def test_default_support_server(self):
+        default_support_server = ""
+        all_args = [test_bot_token, test_maps_token, test_db_path]
+        results = self.argparser.parse_args(all_args)
+        self.assertEqual(default_support_server, results.support_server)
 
 
     def tearDown(self) -> None:

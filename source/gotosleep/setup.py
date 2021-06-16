@@ -31,6 +31,7 @@ def init_argparse():
     parser.add_argument("maps_token", help="the API token supplied from Google Cloud Services", metavar="maps-token")
     parser.add_argument("db_path", help="the path to the SQL database to use.", metavar="db-path", type=db_file)
     parser.add_argument("-l", "--log-dir", help="the directory to store logs in. Defaults to './logs'", type=log_dir, default="logs")
+    parser.add_argument("-s", "--support-server", help="the invite link of the support server used with this bot", default="")
     
     return parser
 
