@@ -1,40 +1,32 @@
 import discord
 from discord.ext import commands
 import logging
-import gtssetupfiles
+import os
 import gotosleep
-import json
 import sqlite3
 import googlemaps
 import ntplib
 import datetime
 from asyncio import sleep as async_sleep
 
-gtssetupfiles.checktokenfile()      # Check token file and database to make sure they are in good form
-gtssetupfiles.checkdatabase()
-gtssetupfiles.checklogdirectory()   # Check log directory to make sure it is there and make it if it is not
-gtssetupfiles.checksupportserver()  # Check support server invite to make sure it is there and make it if it is not
-
-with open("token.json", "r") as bot_token_file:     # Open token file and read tokens out of it
-    bot_token_json = json.loads(bot_token_file.read())
-    bot_token = bot_token_json["botToken"]
-    google_token = bot_token_json["googleToken"]
-
-with open("supportserver.json", "r") as support_server_file:
-    support_server_json = json.loads(support_server_file.read())
-    support_server_invite = support_server_json["supportServerInvite"]
+command_args = gotosleep.handle_args()
+bot_token = command_args.bot_token
+google_token = command_args.maps_token
+db_path = command_args.db_path
+log_dir = "./" + command_args.log_dir
+support_server_invite = command_args.support_server
 
 gmaps = googlemaps.Client(google_token)
 ntpclient = ntplib.NTPClient()
 ntpserver = "time.google.com"
 ntp_offset = datetime.datetime.now()
 
-sleepydb = sqlite3.connect("../sleepy.db")
+sleepydb = sqlite3.connect(db_path)
 sleepycursor = sleepydb.cursor()
 
 logger = logging.getLogger("discord")
 logger.setLevel(logging.ERROR)
-handler = logging.FileHandler("./logs/gotosleeplog-"+datetime.datetime.now().strftime("%d-%m-%Y-%H-%M-%S")+".txt", "w", "utf-8")
+handler = logging.FileHandler(os.path.join(log_dir, "gotosleeplog-"+datetime.datetime.now().strftime("%d-%m-%Y-%H-%M-%S"))+".txt", "w", "utf-8")
 handler.setFormatter(logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s"))
 logger.addHandler(handler)
 
