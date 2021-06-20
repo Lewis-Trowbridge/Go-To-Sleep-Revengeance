@@ -27,35 +27,35 @@ class TestArgParser(unittest.TestCase):
                 self.argparser.parse_args(help_args)
     
     def test_all_args(self):
-        all_args = [test_bot_token, test_maps_token, test_db_path, "--log-dir", test_log_path, "--support-server", test_support_server]
+        all_args = ["--b", test_bot_token, "-m", test_maps_token, "-d", test_db_path, "--log-dir", test_log_path, "--support-server", test_support_server]
         result = self.argparser.parse_args(all_args)
-        self.assertEqual(all_args[0], result.bot_token)
-        self.assertEqual(all_args[1], result.maps_token)
-        self.assertEqual(all_args[2], str(result.db_path))
-        self.assertEqual(all_args[4], str(result.log_dir))
-        self.assertEqual(all_args[6], result.support_server)
+        self.assertEqual(all_args[1], result.bot_token)
+        self.assertEqual(all_args[3], result.maps_token)
+        self.assertEqual(all_args[5], str(result.db_path))
+        self.assertEqual(all_args[7], str(result.log_dir))
+        self.assertEqual(all_args[9], result.support_server)
 
     def test_nonexistent_db_path(self):
         false_db_path = "./notarealdb.db"
         with self.assertRaises(FileNotFoundError):
-            all_args = [test_bot_token, test_maps_token, false_db_path, "--log-dir", test_log_path]
+            all_args = ["-b", test_bot_token, "-m", test_maps_token, "-d", false_db_path, "--log-dir", test_log_path]
             self.argparser.parse_args(all_args)
     
     def test_not_db_file(self):
         not_a_db_file_path = "README.md"
         with self.assertRaises(SystemExit):
-            all_args = [test_bot_token, test_maps_token, not_a_db_file_path, "--log-dir", test_log_path]
+            all_args = ["-b", test_bot_token, "-m", test_maps_token, "-d", not_a_db_file_path, "--log-dir", test_log_path]
             self.argparser.parse_args(all_args)
         
     def test_default_log_dir(self):
         default_log_path = "logs"
-        all_args = [test_bot_token, test_maps_token, test_db_path]
+        all_args = ["-b", test_bot_token, "-m", test_maps_token, "-d", test_db_path]
         results = self.argparser.parse_args(all_args)
         self.assertEqual(default_log_path, results.log_dir)
     
     def test_default_support_server(self):
         default_support_server = ""
-        all_args = [test_bot_token, test_maps_token, test_db_path]
+        all_args = ["-b", test_bot_token, "-m", test_maps_token, "-d", test_db_path]
         results = self.argparser.parse_args(all_args)
         self.assertEqual(default_support_server, results.support_server)
 

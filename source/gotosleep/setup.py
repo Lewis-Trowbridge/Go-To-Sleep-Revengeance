@@ -1,6 +1,11 @@
 import argparse
 import pathlib
 import os
+import sys
+
+GTS_BOT_TOKEN = "GTS_BOT_TOKEN"
+GTS_MAPS_TOKEN = "GTS_MAPS_TOKEN"
+GTS_DB_PATH = "GTS_DB_PATH"
 
 def db_file(file_string):
     if os.path.exists(file_string):
@@ -27,16 +32,31 @@ def init_argparse():
     parser = argparse.ArgumentParser(
         description="A Discord bot designed to give reminders to go to sleep. Get your friends some semblance of a decent sleep schedule!"
     )
-    parser.add_argument("bot_token", help="the bot token supplied from Discord.", metavar="bot-token")
-    parser.add_argument("maps_token", help="the API token supplied from Google Cloud Services", metavar="maps-token")
-    parser.add_argument("db_path", help="the path to the SQL database to use.", metavar="db-path", type=db_file)
+    parser.add_argument("-b", "--bot-token", help="the bot token supplied from Discord. Overrides GTS_BOT_TOKEN environment variable")
+    parser.add_argument("-m", "--maps-token", help="the API token supplied from Google Cloud Services. Overrides GTS_MAPS_TOKEN environment variable")
+    parser.add_argument("-d", "--db-path", help="the path to the SQL database to use. Overrides GTS_DB_PATH environment variable", type=db_file)
     parser.add_argument("-l", "--log-dir", help="the directory to store logs in. Defaults to './logs'", type=log_dir, default="logs")
     parser.add_argument("-s", "--support-server", help="the invite link of the support server used with this bot", default="")
     
     return parser
 
+def check_env_variable(variable_name: str):
+    env_value = os.getenv(variable_name)
+    if env_value == None:
+        sys.exit(variable_name + " is blank. Please fill this in to run the bot.")
+    return env_value
+
+
 def handle_args():
 
     parser = init_argparse()
     args = parser.parse_args()
+    
+    if args.bot_token == None:
+        args.bot_token = check_env_variable(GTS_BOT_TOKEN)
+    if args.maps_token == None:
+        args.maps_token = check_env_variable(GTS_MAPS_TOKEN)
+    if args.db_path == None:
+        args.db_path = check_env_variable(GTS_DB_PATH)
+
     return args
