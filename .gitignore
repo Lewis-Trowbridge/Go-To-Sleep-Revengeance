@@ -2,3 +2,5 @@
 .vscode/
 *.db
 logs/
+*.env
+!dev.example.env
