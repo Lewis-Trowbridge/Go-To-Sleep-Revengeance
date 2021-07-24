@@ -1,3 +1,4 @@
 discord.py
 googlemaps
 ntplib
+mysql-connector-python

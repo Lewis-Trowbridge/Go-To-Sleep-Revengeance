@@ -2,6 +2,8 @@ import argparse
 import pathlib
 import os
 import sys
+import sqlite3
+import mysql.connector as mysql
 
 GTS_BOT_TOKEN = "GTS_BOT_TOKEN"
 GTS_MAPS_TOKEN = "GTS_MAPS_TOKEN"
@@ -37,6 +39,8 @@ def init_argparse():
     parser.add_argument("-d", "--db-path", help="the path to the SQL database to use. Overrides GTS_DB_PATH environment variable", type=db_file)
     parser.add_argument("-l", "--log-dir", help="the directory to store logs in. Defaults to './logs'", type=log_dir, default="logs")
     parser.add_argument("-s", "--support-server", help="the invite link of the support server used with this bot", default="")
+    parser.add_argument("--sqlite", dest="sqlite", help="Signals to use SQLite database.", action="store_true")
+    parser.add_argument("--mysql", dest="mysql", help="Signals to use MySQL database.", action="store_true")
     
     return parser
 
@@ -58,5 +62,10 @@ def handle_args():
         args.maps_token = check_env_variable(GTS_MAPS_TOKEN)
     if args.db_path == None:
         args.db_path = check_env_variable(GTS_DB_PATH)
-
+    if args.mysql:
+        args.db_connection = mysql.connect(args.db_path)
+    elif args.sqlite:
+        args.db_connection = sqlite3.connect(args.db_path)
+    else:
+        sys.exit("No database engine given. Please select either SQLite (--sqlite) or MySQL (--mysql).")
     return args

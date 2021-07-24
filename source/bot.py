@@ -3,7 +3,6 @@ from discord.ext import commands
 import logging
 import os
 import gotosleep
-import sqlite3
 import googlemaps
 import ntplib
 import datetime
@@ -21,7 +20,7 @@ ntpclient = ntplib.NTPClient()
 ntpserver = "time.google.com"
 ntp_offset = datetime.datetime.now()
 
-sleepydb = sqlite3.connect(db_path)
+sleepydb = command_args.db_connection
 sleepycursor = sleepydb.cursor()
 
 logger = logging.getLogger("discord")
