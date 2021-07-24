@@ -11,6 +11,7 @@ A new bot based off of an old one that is so overcome with in-jokes that it's no
 
     - [Discord.py](https://pypi.org/project/discord.py/)
     - [Google Maps Python library](https://pypi.org/project/googlemaps/)
+    - [MySQL Connector](https://pypi.org/project/mysql-connector-python/)
     - [ntplib](https://pypi.org/project/ntplib/)
     
 - Patience of a saint
