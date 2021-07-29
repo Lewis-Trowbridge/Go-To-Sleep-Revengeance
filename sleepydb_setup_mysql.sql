@@ -15,15 +15,15 @@ CREATE TABLE area_cache (
 );
 
 CREATE TABLE server_linked_channels (
-    server_id INTEGER,
-    channel_id INTEGER,
+    server_id BIGINT,
+    channel_id BIGINT,
     PRIMARY KEY (server_id, channel_id)
 );
 
 CREATE TABLE sleep_tracker (
-    user_id INTEGER PRIMARY KEY,
+    user_id BIGINT PRIMARY KEY,
     area_id INTEGER,
-    server_id INTEGER,
+    server_id BIGINT,
     bedtime_offset INTEGER DEFAULT 0,
     aggressive_ping INTEGER DEFAULT 0,
     FOREIGN KEY (area_id) REFERENCES area_cache(area_id),

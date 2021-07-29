@@ -2,12 +2,14 @@ import argparse
 import pathlib
 import os
 import sys
-import sqlite3
 import mysql.connector as mysql
 
 GTS_BOT_TOKEN = "GTS_BOT_TOKEN"
 GTS_MAPS_TOKEN = "GTS_MAPS_TOKEN"
 GTS_DB_PATH = "GTS_DB_PATH"
+GTS_DB_USER = "GTS_DB_USER"
+GTS_DB_PASS = "GTS_DB_PASS"
+GTS_DB_DATABASE = "GTS_DB_DATABASE"
 
 def db_file(file_string):
     if os.path.exists(file_string):
@@ -62,10 +64,5 @@ def handle_args():
         args.maps_token = check_env_variable(GTS_MAPS_TOKEN)
     if args.db_path == None:
         args.db_path = check_env_variable(GTS_DB_PATH)
-    if args.mysql:
-        args.db_connection = mysql.connect(args.db_path)
-    elif args.sqlite:
-        args.db_connection = sqlite3.connect(args.db_path)
-    else:
-        sys.exit("No database engine given. Please select either SQLite (--sqlite) or MySQL (--mysql).")
+    args.db_connection = mysql.connect(user=check_env_variable(GTS_DB_USER), passwd=check_env_variable(GTS_DB_PASS), host=args.db_path, db=check_env_variable(GTS_DB_DATABASE), buffered=True)
     return args

@@ -1,3 +1,4 @@
+from asyncio.tasks import sleep
 import discord
 from discord.ext import commands
 import logging
@@ -65,11 +66,12 @@ async def link(ctx):
         Me: This channel has been registered as where I'll send pings - please don't force me to!
     """
     # If this channel is not registered
-    if sleepycursor.execute("SELECT * FROM server_linked_channels WHERE server_id=?", (ctx.message.guild.id,)).fetchone() is None:
-        sleepycursor.execute("INSERT INTO server_linked_channels(server_id, channel_id) VALUES (?, ?)", (ctx.message.guild.id, ctx.message.channel.id))
+    sleepycursor.execute("SELECT * FROM server_linked_channels WHERE server_id=%s", (ctx.message.guild.id,))
+    if sleepycursor.fetchone() is None:
+        sleepycursor.execute("INSERT INTO server_linked_channels(server_id, channel_id) VALUES (%s, %s)", (ctx.message.guild.id, ctx.message.channel.id))
         await ctx.send("This channel has been registered as where I'll send pings - please don't force me to!")
     else:
-        sleepycursor.execute("UPDATE server_linked_channels SET channel_id=? WHERE server_id=?", (ctx.message.channel.id, ctx.message.guild.id))
+        sleepycursor.execute("UPDATE server_linked_channels SET channel_id=%s WHERE server_id=%s", (ctx.message.channel.id, ctx.message.guild.id))
         await ctx.send("Okay, I'll ping here from now on!")
     sleepydb.commit()
 
@@ -111,26 +113,29 @@ async def register(ctx):
                 if name == "":
                     name = address["long_name"]
         # If this name is not already in the cache:
-        cached_location = sleepycursor.execute("SELECT * FROM area_cache WHERE area_name = ?", (name,)).fetchone()
+        sleepycursor.execute("SELECT * FROM area_cache WHERE area_name = %s", (name,))
+        cached_location = sleepycursor.fetchone()
         if cached_location is None:
             area_id = await new_location(name, latlong)
         else:
             area_id = cached_location[0]
 
         # If user is not already in the database
-        if sleepycursor.execute("SELECT user_id FROM sleep_tracker WHERE user_id = ?", (ctx.author.id,)).fetchone() is None:
-            server_id = sleepycursor.execute("SELECT server_id FROM server_linked_channels WHERE server_id = ?",
-                                 (ctx.message.guild.id,)).fetchone()
-            # If the server does not already have a linked channel
+        sleepycursor.execute("SELECT user_id FROM sleep_tracker WHERE user_id = %s", (ctx.author.id,))
+        if sleepycursor.fetchone() is None:
+            sleepycursor.execute("SELECT server_id FROM server_linked_channels WHERE server_id = %s",
+                                 (ctx.message.guild.id,))
+            server_id = sleepycursor.fetchone()
+                        # If the server does not already have a linked channel
             if server_id is None:
                 await ctx.send("Sorry, but you'll need to link a channel to use first using the s!link command. I'd recommend a channel used only for bots.")
                 return
             else:
                 sleepycursor.execute("""INSERT INTO sleep_tracker(user_id, area_id, server_id)
-                                VALUES (?,?,?)""", (ctx.author.id, area_id, server_id[0]))
+                                VALUES (%s,%s,%s)""", (ctx.author.id, area_id, server_id[0]))
         # If user is already in the database
         else:
-            sleepycursor.execute("UPDATE sleep_tracker SET area_id=?, server_id=? WHERE user_id = ?", (area_id, ctx.message.guild.id, ctx.author.id))
+            sleepycursor.execute("UPDATE sleep_tracker SET area_id=%s, server_id=%s WHERE user_id = %s", (area_id, ctx.message.guild.id, ctx.author.id))
         sleepydb.commit()
         await ctx.send("You are now registered at "+name+". I'll now message you in this server.")
     else:
@@ -139,18 +144,20 @@ async def register(ctx):
 
 async def new_location(name, latlong):
     timezone_info = gmaps.timezone(latlong)
-    timezone_in_database = sleepycursor.execute("SELECT timezone_id FROM timezones WHERE timezone_id=?",
-                                                (timezone_info["timeZoneId"],)).fetchone()
+    sleepycursor.execute("SELECT timezone_id FROM timezones WHERE timezone_id=%s",
+                                                (timezone_info["timeZoneId"],))
+    timezone_in_database = sleepycursor.fetchone()
     if timezone_in_database is not None:    # If the timezone in question is already in the database
         timezone_in_database = timezone_in_database[0]
     # If the timezone is not already in the database:
     if timezone_in_database != timezone_info["timeZoneId"]:
         sleepycursor.execute("""INSERT INTO timezones(timezone_id, timezone_name, utc_offset, dst_offset)
-                    VALUES (?,?,?,?)""", (timezone_info["timeZoneId"], timezone_info["timeZoneName"], timezone_info["rawOffset"], timezone_info["dstOffset"]))
+                    VALUES (%s,%s,%s,%s)""", (timezone_info["timeZoneId"], timezone_info["timeZoneName"], timezone_info["rawOffset"], timezone_info["dstOffset"]))
     sleepycursor.execute("""INSERT INTO area_cache(area_name, latitude, longitude, timezone_id) 
-                VALUES(?,?,?,?) """, (name, latlong["lat"], latlong["lng"], timezone_info["timeZoneId"]))
+                VALUES(%s,%s,%s,%s) """, (name, latlong["lat"], latlong["lng"], timezone_info["timeZoneId"]))
     sleepydb.commit()
-    area_id = sleepydb.execute("SELECT area_id FROM area_cache WHERE area_name = ?", (name,)).fetchone()
+    sleepycursor.execute("SELECT area_id FROM area_cache WHERE area_name = %s", (name,))
+    area_id = sleepycursor.fetchone()
     return area_id[0]
 
 
@@ -168,8 +175,9 @@ async def unregister(ctx):
         User: s!unregister
         Me: Okay, all done!
     """
-    if sleepycursor.execute("SELECT user_id FROM sleep_tracker WHERE user_id = ?", (ctx.author.id,)).fetchone() is not None:
-        sleepycursor.execute("DELETE FROM sleep_tracker WHERE user_id = ?", (ctx.author.id,))
+    sleepycursor.execute("SELECT user_id FROM sleep_tracker WHERE user_id = %s", (ctx.author.id,))
+    if sleepycursor.fetchone() is not None:
+        sleepycursor.execute("DELETE FROM sleep_tracker WHERE user_id = %s", (ctx.author.id,))
         sleepydb.commit()
         await ctx.send("Okay, all done!")
     else:
@@ -187,10 +195,12 @@ async def pingaggressively(ctx):
     Usage: s!pingaggressively
     """
 
-    if sleepycursor.execute("SELECT user_id FROM sleep_tracker WHERE user_id=?", (ctx.author.id,)).fetchone() is not None:
-        current_state = sleepycursor.execute("SELECT aggressive_ping FROM sleep_tracker WHERE user_id=?", (ctx.author.id,)).fetchone()[0]
+    sleepycursor.execute("SELECT user_id FROM sleep_tracker WHERE user_id=%s", (ctx.author.id,))
+    if sleepycursor.fetchone() is not None:
+        sleepycursor.execute("SELECT aggressive_ping FROM sleep_tracker WHERE user_id=%s", (ctx.author.id,))
+        current_state = sleepycursor.fetchone()[0]
         current_state_bool = not bool(current_state)
-        sleepycursor.execute("UPDATE sleep_tracker SET aggressive_ping = ? WHERE user_id = ?", (int(current_state_bool), ctx.author.id))
+        sleepycursor.execute("UPDATE sleep_tracker SET aggressive_ping = %s WHERE user_id = %s", (int(current_state_bool), ctx.author.id))
         sleepydb.commit()
         await ctx.send("Okay, all done!")
     else:
@@ -212,7 +222,8 @@ async def bedtime(ctx):
     """
 
     # If the user is already in the database
-    if sleepycursor.execute("SELECT user_id FROM sleep_tracker WHERE user_id=?", (ctx.author.id,)).fetchone() is not None:
+    sleepycursor.execute("SELECT user_id FROM sleep_tracker WHERE user_id=%s", (ctx.author.id,))
+    if sleepycursor.fetchone() is not None:
         try:
             string_bedtime = remove_prefix("bedtime", ctx.message.content)
             string_hour, string_minutes = str.split(string_bedtime, ":")
@@ -233,7 +244,7 @@ async def bedtime(ctx):
             await ctx.send("Sorry, something went wrong there. Are you sure you're using 24-hour time?")
             return
         offset = (hour * 3600) + (minutes * 60)
-        sleepycursor.execute("UPDATE sleep_tracker SET bedtime_offset=? WHERE user_id=?", (offset, ctx.author.id))
+        sleepycursor.execute("UPDATE sleep_tracker SET bedtime_offset=%s WHERE user_id=%s", (offset, ctx.author.id))
         sleepydb.commit()
         await ctx.send("Okay, that should be all! Well done for taking some action!")
     else:
@@ -264,11 +275,12 @@ async def refresh_timezone_offset():
         await align_to_hour()
         aligning = False
     while aligning is False:
-        for timezone in sleepycursor.execute("""SELECT timezones.timezone_id, ac.latitude, ac.longitude FROM timezones
-                JOIN area_cache ac on timezones.timezone_id = ac.timezone_id""").fetchall():
+        sleepycursor.execute("""SELECT timezones.timezone_id, ac.latitude, ac.longitude FROM timezones
+                JOIN area_cache ac on timezones.timezone_id = ac.timezone_id""")
+        for timezone in sleepycursor.fetchall():
             latlong = {"lat": timezone[1], "lng": timezone[2]}
             new_time = gmaps.timezone(latlong)
-            sleepycursor.execute("""UPDATE timezones SET utc_offset=?, dst_offset=? WHERE timezone_id=?""",
+            sleepycursor.execute("""UPDATE timezones SET utc_offset=%s, dst_offset=%s WHERE timezone_id=%s""",
                              (new_time["rawOffset"], new_time["dstOffset"], timezone[0]))
         sleepydb.commit()
         await async_sleep(86400)
@@ -285,12 +297,13 @@ async def check_sleep():
         current_server_members = []
         current_channel_to_ping = 0
         lost_server_id = 0
-        user_info = sleepycursor.execute("""SELECT user_id, sleep_tracker.server_id, bedtime_offset, aggressive_ping, t.utc_offset, t.dst_offset, slc.channel_id FROM sleep_tracker
+        sleepycursor.execute("""SELECT user_id, sleep_tracker.server_id, bedtime_offset, aggressive_ping, t.utc_offset, t.dst_offset, slc.channel_id FROM sleep_tracker
     JOIN area_cache ac on sleep_tracker.area_id = ac.area_id
     JOIN timezones t on ac.timezone_id = t.timezone_id
     JOIN server_linked_channels slc on sleep_tracker.server_id = slc.server_id
-    ORDER BY sleep_tracker.server_id;""").fetchall()
-        for user in user_info:
+    ORDER BY sleep_tracker.server_id;""")
+        results = sleepycursor.fetchall()
+        for user in results:
             server_id = user[1]
             if server_id == lost_server_id:     # If on this run we've removed a server ID, this will skip the remaining users who belong in that server
                 continue
@@ -312,8 +325,8 @@ async def check_sleep():
                 current_server_members = []     # Clear out the members already gathered
                 current_channel_to_ping = channel_to_ping
                 if current_server is None:      # If for some reason we cannot access a server, for example we've been kicked, delete all data about it
-                    sleepycursor.execute("DELETE FROM sleep_tracker WHERE server_id = ? ", (current_server_id,))    # Delete user data for users from that server, critical for privacy and ethical reasons
-                    sleepycursor.execute("DELETE FROM server_linked_channels WHERE server_id = ?", (current_server_id,))    # Delete server data, more to save space than privacy
+                    sleepycursor.execute("DELETE FROM sleep_tracker WHERE server_id = %s ", (current_server_id,))    # Delete user data for users from that server, critical for privacy and ethical reasons
+                    sleepycursor.execute("DELETE FROM server_linked_channels WHERE server_id = %s", (current_server_id,))    # Delete server data, more to save space than privacy
                     sleepydb.commit()
                     lost_server_id = current_server_id
                     continue
@@ -323,7 +336,7 @@ async def check_sleep():
                 if current_member is not None:
                     current_server_members.append((current_member, aggressive_ping))
                 else:   # If the user is none, that means they are inaccessible for some reason, and to err on the side of caution we remove them from the database
-                    sleepycursor.execute("DELETE FROM sleep_tracker WHERE user_id=?", (user_id,))
+                    sleepycursor.execute("DELETE FROM sleep_tracker WHERE user_id=%s", (user_id,))
                     sleepydb.commit()
         await go_to_sleep(current_server_members, current_channel_to_ping)
         await async_sleep(60)
@@ -348,10 +361,10 @@ async def go_to_sleep(members_to_ping, channel_id):
                 if len(well_done_string) != 0:      # If there are any users that are asleep, send the message.
                     await channel_to_ping.send(well_done_string + "well done. It's good to see you're taking your health seriously. I'm proud of you!")
             except discord.Forbidden:   # If we get a forbidden error, this may mean we do not have permissions, so we should null out the channel until things are fixed
-                sleepycursor.execute("UPDATE server_linked_channels SET channel_id=? WHERE channel_id=?", (None, channel_id))
+                sleepycursor.execute("UPDATE server_linked_channels SET channel_id=%s WHERE channel_id=%s", (None, channel_id))
                 sleepydb.commit()
         else:   # If the channel is not accessible, it may have been deleted, so we should null it out
-            sleepycursor.execute("UPDATE server_linked_channels SET channel_id=? WHERE channel_id=?", (None, channel_id))
+            sleepycursor.execute("UPDATE server_linked_channels SET channel_id=%s WHERE channel_id=%s", (None, channel_id))
     else:
         return
 
