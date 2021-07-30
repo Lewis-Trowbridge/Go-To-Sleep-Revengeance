@@ -1,0 +1,22 @@
+name: Build and Deploy Docker image
+
+on:
+  push:
+    branches: [ main ]
+    
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Deploy to Docker Hub
+        uses: elgohr/Publish-Docker-Github-Action@3.04
+        with:
+          name: lewistrowbridge/go-to-sleep-revengeance
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
