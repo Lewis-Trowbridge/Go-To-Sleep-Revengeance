@@ -52,13 +52,6 @@ class TestArgParser(unittest.TestCase):
         all_args = ["-b", test_bot_token, "-m", test_maps_token, "-d", test_db_path]
         results = self.argparser.parse_args(all_args)
         self.assertEqual(default_log_path, results.log_dir)
-    
-    def test_default_support_server(self):
-        default_support_server = ""
-        all_args = ["-b", test_bot_token, "-m", test_maps_token, "-d", test_db_path]
-        results = self.argparser.parse_args(all_args)
-        self.assertEqual(default_support_server, results.support_server)
-
 
     def tearDown(self) -> None:
         os.remove(test_db_path)

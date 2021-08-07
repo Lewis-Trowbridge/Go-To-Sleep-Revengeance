@@ -41,10 +41,7 @@ def init_argparse():
     parser.add_argument("-m", "--maps-token", help="the API token supplied from Google Cloud Services. Overrides GTS_MAPS_TOKEN environment variable")
     parser.add_argument("-d", "--db-path", help="the path to the SQL database to use. Overrides GTS_DB_PATH environment variable", type=db_file)
     parser.add_argument("-l", "--log-dir", help="the directory to store logs in. Defaults to './logs'", type=log_dir, default="logs")
-    parser.add_argument("-s", "--support-server", help="the invite link of the support server used with this bot")
-    parser.add_argument("--sqlite", dest="sqlite", help="Signals to use SQLite database.", action="store_true")
-    parser.add_argument("--mysql", dest="mysql", help="Signals to use MySQL database.", action="store_true")
-    
+    parser.add_argument("-s", "--support-server", help="the invite link of the support server used with this bot")    
     return parser
 
 def check_env_variable(variable_name: str, default_value = None):
