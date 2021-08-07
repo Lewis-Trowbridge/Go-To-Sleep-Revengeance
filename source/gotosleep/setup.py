@@ -63,8 +63,6 @@ def handle_args():
         args.bot_token = check_env_variable(GTS_BOT_TOKEN)
     if args.maps_token == None:
         args.maps_token = check_env_variable(GTS_MAPS_TOKEN)
-    if args.support_server == "":
-        args.support_server = os.getenv(GTS_SUPPORT_SERVER)
     if args.support_server == None:
         args.support_server = check_env_variable(GTS_SUPPORT_SERVER, "")
     if args.db_path == None:
