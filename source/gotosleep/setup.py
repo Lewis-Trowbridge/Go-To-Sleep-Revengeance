@@ -6,6 +6,7 @@ import mysql.connector as mysql
 
 GTS_BOT_TOKEN = "GTS_BOT_TOKEN"
 GTS_MAPS_TOKEN = "GTS_MAPS_TOKEN"
+GTS_SUPPORT_SERVER = "GTS_SUPPORT_SERVER"
 GTS_DB_PATH = "GTS_DB_PATH"
 GTS_DB_USER = "GTS_DB_USER"
 GTS_DB_PASS = "GTS_DB_PASS"
@@ -62,6 +63,8 @@ def handle_args():
         args.bot_token = check_env_variable(GTS_BOT_TOKEN)
     if args.maps_token == None:
         args.maps_token = check_env_variable(GTS_MAPS_TOKEN)
+    if args.support_server == None:
+        args.support_server = check_env_variable(GTS_SUPPORT_SERVER)
     if args.db_path == None:
         args.db_path = check_env_variable(GTS_DB_PATH)
     args.db_connection = mysql.connect(user=check_env_variable(GTS_DB_USER), passwd=check_env_variable(GTS_DB_PASS), host=args.db_path, db=check_env_variable(GTS_DB_DATABASE), buffered=True)
