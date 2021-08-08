@@ -207,17 +207,20 @@ async def pingaggressively(ctx):
         await ctx.send("Sorry, I'll need you to register first. Check s!help for more information!")
 
 @sleepingbot.command(pass_context=True)
-async def bedtime(ctx):
+async def bedtime(ctx: commands.Context):
     """
     Sets a custom bedtime!
 
     Allows you to decide when you want me to ping you - I'm trusting you to help yourself here, but I understand improving your sleep schedule isn't an instant matter and so should you.
-    At the moment I only support 24-hour format for understanding exactly what time you mean, so please use that.
+    You can use either 12-hour or 24-hour format, it's up to you!
 
     Usage: s!bedtime [time]
 
     Example:
         User: s!bedtime 1:00
+        Me: Got it! Well done for taking some action!
+
+        User: s!bedtime 1:00 PM
         Me: Got it! Well done for taking some action!
     """
 
@@ -226,27 +229,12 @@ async def bedtime(ctx):
     if sleepycursor.fetchone() is not None:
         try:
             string_bedtime = remove_prefix("bedtime", ctx.message.content)
-            string_hour, string_minutes = str.split(string_bedtime, ":")
-        # Filter out no colon placement
+            offset = gotosleep.times.get_seconds(string_bedtime)
+            sleepycursor.execute("UPDATE sleep_tracker SET bedtime_offset=%s WHERE user_id=%s", (offset, ctx.author.id))
+            sleepydb.commit()
+            await ctx.send("Okay, that should be all! Well done for taking some action!")
         except ValueError:
-            await ctx.send("Sorry, something went wrong there. Please try typing that in again - have you placed a colon?")
-            return
-        # Filter out string placements
-        try:
-            hour = int(string_hour)
-            minutes = int(string_minutes)
-        except ValueError:
-            await ctx.send("Sorry, something went wrong there. Silly as it sounds, have you made sure to put both hours and minutes?")
-            return
-        if hour == 24:
-            hour = 0
-        if hour > 24 or hour < 0 or minutes > 60 or minutes < 0:
-            await ctx.send("Sorry, something went wrong there. Are you sure you're using 24-hour time?")
-            return
-        offset = (hour * 3600) + (minutes * 60)
-        sleepycursor.execute("UPDATE sleep_tracker SET bedtime_offset=%s WHERE user_id=%s", (offset, ctx.author.id))
-        sleepydb.commit()
-        await ctx.send("Okay, that should be all! Well done for taking some action!")
+            await ctx.send("Sorry, there was a problem with the formatting of that message - can you try that again?")
     else:
         await ctx.send("Sorry, please register first - then we can get to this part.")
 
