@@ -17,7 +17,7 @@ CREATE TABLE area_cache (
 CREATE TABLE server_linked_channels (
     server_id BIGINT,
     channel_id BIGINT,
-    PRIMARY KEY (server_id, channel_id)
+    UNIQUE (server_id, channel_id)
 );
 
 CREATE TABLE sleep_tracker (
