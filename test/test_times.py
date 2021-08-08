@@ -82,5 +82,21 @@ class TestTimes(unittest.TestCase):
         test_timestring = "FA:IL AM"
         self.assertRaises(ValueError, times.get_seconds, test_timestring)
 
+    def test_get_seconds_hours_outside_24_range_throws_valueerror(self):
+        test_timestring = "25:00"
+        self.assertRaises(ValueError, times.get_seconds, test_timestring)
+
+    def test_get_seconds_minutes_outside_60_range_throws_valueerror(self):
+        test_timestring = "10:70"
+        self.assertRaises(ValueError, times.get_seconds, test_timestring)
+
+    def test_get_seconds_hours_outside_12_range_throws_valueerror(self):
+        test_timestring = "13:00AM"
+        self.assertRaises(ValueError, times.get_seconds, test_timestring)
+    
+    def test_get_seconds_minutes_outside_12_range_throws_valueerror(self):
+        test_timestring = "12:63AM"
+        self.assertRaises(ValueError, times.get_seconds, test_timestring)
+
 if __name__ == '__main__':
     unittest.main()

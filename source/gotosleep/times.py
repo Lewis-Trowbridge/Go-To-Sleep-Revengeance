@@ -8,10 +8,14 @@ def get_seconds(timestring: str) -> int:
         groups = result.groups()
         hours = int(groups[0])
         mins = int(groups[1])
-        secs = hours * 3600 + mins * 60
-        if groups[2] == "PM":
-            secs += 43200
-        return secs
+        ampm = groups[2]
+        if ((ampm is None and hours in range(0, 24)) or (hours in range(0, 12))) and (mins in range(0, 60)):
+            secs = hours * 3600 + mins * 60
+            if ampm == "PM":
+                secs += 43200
+            return secs
+        else:
+            raise ValueError
 
 
     else:
