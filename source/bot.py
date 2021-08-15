@@ -53,7 +53,7 @@ def remove_prefix(command, message):
 
 
 @sleepingbot.command(pass_context=True)
-async def link(ctx):
+async def link(ctx: commands.Context):
 
     """
     Link a channel - use this one first!
@@ -77,7 +77,7 @@ async def link(ctx):
 
 
 @sleepingbot.command(pass_context=True)
-async def register(ctx):
+async def register(ctx: commands.Context):
 
     """
     Register yourself for sleep notifications!
@@ -162,7 +162,7 @@ async def new_location(name, latlong):
 
 
 @sleepingbot.command(pass_context=True)
-async def unregister(ctx):
+async def unregister(ctx: commands.Context):
 
     """
     Unregisters you for sleep notifications
@@ -185,7 +185,7 @@ async def unregister(ctx):
 
 
 @sleepingbot.command(pass_context=True)
-async def pingaggressively(ctx):
+async def pingaggressively(ctx: commands.Context):
     """
     Changes ping settings!
 
@@ -358,7 +358,7 @@ async def go_to_sleep(members_to_ping, channel_id):
 
 
 @sleepingbot.command(pass_context=True)
-async def support(ctx):
+async def support(ctx: commands.Context):
 
     """
     Gives you the link for the support server
@@ -372,7 +372,7 @@ async def support(ctx):
 
 
 @sleepingbot.command(pass_context=True)
-async def aboutme(ctx):
+async def aboutme(ctx: commands.Context):
 
     """
     Tells you all about me
