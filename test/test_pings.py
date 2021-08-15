@@ -59,11 +59,37 @@ class TestPings(unittest.TestCase):
 
         self.assertTrue(real_result)
 
+    @freeze_time("1999-12-31 23:00:00")
+    def test_is_bedtime_with_no_offset_at_11PM_with_bedtime_at_11PM_returns_true(self):
+        test_bedtime = 82800
+
+        real_result = pings.is_bedtime(datetime.timedelta(), 0, 0, test_bedtime)
+
+        self.assertTrue(real_result)
+
 
     @freeze_time("2000-01-01")
-    def test_is_bedtime_with_offset_at_1AM_with_bedtime_at_1AM_returns_true(self):
+    def test_is_bedtime_with_offset_at_12PM_with_bedtime_at_1AM_returns_true(self):
         test_bedtime = 3600
         test_utc_offset = 3600
+
+        real_result = pings.is_bedtime(datetime.timedelta(), test_utc_offset, 0, test_bedtime)
+
+        self.assertTrue(real_result)
+
+    @freeze_time("1999-12-31 22:00:00")
+    def test_is_bedtime_with_offset_at_10PM_with_bedtime_at_11PM_returns_true(self):
+        test_bedtime = 82800
+        test_utc_offset = 3600
+
+        real_result = pings.is_bedtime(datetime.timedelta(), test_utc_offset, 0, test_bedtime)
+
+        self.assertTrue(real_result)
+
+    @freeze_time("2000-01-01 01:00:00")
+    def test_is_bedtime_with_negative_offset_at_1AM_with_bedtime_at_11PM_returns_true(self):
+        test_bedtime = 82800
+        test_utc_offset = -7200
 
         real_result = pings.is_bedtime(datetime.timedelta(), test_utc_offset, 0, test_bedtime)
 
