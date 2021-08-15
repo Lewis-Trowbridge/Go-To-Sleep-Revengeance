@@ -5,7 +5,7 @@ import source.gotosleep.pings as pings
 
 class TestPings(unittest.TestCase):
 
-    @mock.patch('discord.Member', autospec=True)
+    @mock.patch('discord.Member')
     def test_is_available_when_online_returns_true(self, mock_member):
         mock_member.status = discord.Status.online
 
@@ -13,7 +13,7 @@ class TestPings(unittest.TestCase):
 
         self.assertTrue(real_value)
 
-    @mock.patch('discord.Member', autospec=True)
+    @mock.patch('discord.Member')
     def test_is_available_when_offline_returns_false(self, mock_member):
         mock_member.status = discord.Status.offline
 
@@ -21,7 +21,7 @@ class TestPings(unittest.TestCase):
 
         self.assertFalse(real_value)
 
-    @mock.patch('discord.Member', autospec=True)
+    @mock.patch('discord.Member')
     def test_is_available_when_dnd_returns_false(self, mock_member):
         mock_member.status = discord.Status.dnd
 
@@ -29,7 +29,7 @@ class TestPings(unittest.TestCase):
 
         self.assertFalse(real_value)
 
-    @mock.patch('discord.Member', autospec=True)
+    @mock.patch('discord.Member')
     def test_is_available_when_idle_returns_false(self, mock_member):
         mock_member.status = discord.Status.idle
 
@@ -37,7 +37,7 @@ class TestPings(unittest.TestCase):
 
         self.assertFalse(real_value)
 
-    @mock.patch('discord.Member', autospec=True)
+    @mock.patch('discord.Member')
     def test_is_available_when_invisible_returns_false(self, mock_member):
         mock_member.status = discord.Status.invisible
 
@@ -45,7 +45,7 @@ class TestPings(unittest.TestCase):
 
         self.assertFalse(real_value)
     
-    @mock.patch('discord.Member', autospec=True)
+    @mock.patch('discord.Member')
     def test_is_available_when_online_with_aggressive_returns_true(self, mock_member):
         mock_member.status = discord.Status.online
 
@@ -53,7 +53,7 @@ class TestPings(unittest.TestCase):
 
         self.assertTrue(real_value)
 
-    @mock.patch('discord.Member', autospec=True)
+    @mock.patch('discord.Member')
     def test_is_available_when_offline_with_aggressive_returns_true(self, mock_member):
         mock_member.status = discord.Status.offline
 
@@ -61,7 +61,7 @@ class TestPings(unittest.TestCase):
 
         self.assertTrue(real_value)
 
-    @mock.patch('discord.Member', autospec=True)
+    @mock.patch('discord.Member')
     def test_is_available_when_dnd_with_aggressive_returns_true(self, mock_member):
         mock_member.status = discord.Status.dnd
 
@@ -69,7 +69,7 @@ class TestPings(unittest.TestCase):
 
         self.assertTrue(real_value)
 
-    @mock.patch('discord.Member', autospec=True)
+    @mock.patch('discord.Member')
     def test_is_available_when_idle_with_aggressive_returns_true(self, mock_member):
         mock_member.status = discord.Status.idle
 
@@ -77,7 +77,7 @@ class TestPings(unittest.TestCase):
 
         self.assertTrue(real_value)
 
-    @mock.patch('discord.Member', autospec=True)
+    @mock.patch('discord.Member')
     def test_is_available_when_invisible_with_aggressive_returns_true(self, mock_member):
         mock_member.status = discord.Status.invisible
 
