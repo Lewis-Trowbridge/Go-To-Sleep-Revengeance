@@ -355,17 +355,6 @@ async def go_to_sleep(members_to_ping, channel_id):
     else:
         return
 
-@sleepingbot.command(pass_context=True)
-async def aboutme(ctx: commands.Context):
-
-    """
-    Tells you all about me
-
-    There's not much to this one - it's just telling you why I'm named like this and where you can find out more.
-    """
-    await ctx.send('''Hey! I'm the descendant of an older bot, just called "Go To Sleep", and trust me you don't want to see that
-My source is at https://github.com/Lewis-Trowbridge/Go-To-Sleep-Revengeance in case you wanted to know more about me.''')
-
 sleepingbot.loop.create_task(refresh_timezone_offset())
 sleepingbot.loop.create_task(check_sleep())
 sleepingbot.add_cog(gotosleep.Misc(support_server_invite))
