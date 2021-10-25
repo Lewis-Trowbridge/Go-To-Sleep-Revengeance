@@ -6,7 +6,7 @@ authors = ["Lewis Trowbridge <lewbob9927@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.7"
 "discord.py" = "^1.7.3"
 googlemaps = "^4.5.3"
 ntplib = "^0.4.0"
