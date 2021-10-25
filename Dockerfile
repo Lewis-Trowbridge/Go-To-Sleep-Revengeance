@@ -3,7 +3,7 @@
 FROM python:3.9.5-slim
 WORKDIR /home
 
-RUN [ "pip" "install" "--no-cache", "poetry" ]
+RUN [ "pip", "install", "--no-cache", "poetry" ]
 
 COPY poetry.lock poetry.lock
 COPY pyproject.toml pyproject.toml
