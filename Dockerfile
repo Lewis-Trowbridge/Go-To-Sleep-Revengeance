@@ -3,9 +3,11 @@
 FROM python:3.9.5-slim
 WORKDIR /home
 
-COPY requirements.txt requirements.txt
+COPY poetry.lock poetry.lock
 
-RUN ["pip", "install", "--no-cache", "-r", "requirements.txt"]
+RUN "curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -"
+
+RUN ["poetry", "install", "--no-dev"]
 
 COPY . .
 
