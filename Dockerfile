@@ -3,12 +3,15 @@
 FROM python:3.9.5-slim
 WORKDIR /home
 
-COPY requirements.txt requirements.txt
+RUN [ "pip" "install" "--no-cache", "poetry" ]
 
-RUN ["pip", "install", "--no-cache", "-r", "requirements.txt"]
+COPY poetry.lock poetry.lock
+COPY pyproject.toml pyproject.toml
+
+RUN ["poetry", "install", "--no-dev"]
 
 COPY . .
 
 WORKDIR /home/source
 
-ENTRYPOINT ["python", "bot.py"]
+ENTRYPOINT ["poetry", "run", "python", "bot.py"]
