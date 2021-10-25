@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "go-to-sleep-revengeance"
+version = "0.1.0"
+description = "A new Discord bot based off of an old one that is so overcome with in-jokes that it's not worth putting out in the public. Get your friends some semblance of a decent sleep schedule."
+authors = ["Lewis Trowbridge <lewbob9927@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+"discord.py" = "^1.7.3"
+googlemaps = "^4.5.3"
+ntplib = "^0.4.0"
+mysql-connector-python = "^8.0.27"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
