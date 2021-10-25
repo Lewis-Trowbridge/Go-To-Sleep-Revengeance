@@ -26,13 +26,13 @@ jobs:
         poetry install
     - name: Test with unittest
       run: |
-        python -m unittest
+        poetry run python -m unittest
         
     - name: Calculate code coverage
       run: |
-        coverage run --source=./source -m unittest
-        coverage report
-        coverage html
+        poetry run coverage run --source=./source -m unittest
+        poetry run coverage report
+        poetry run coverage html
         
     - name: Upload coverage report
       uses: actions/upload-artifact@v2
