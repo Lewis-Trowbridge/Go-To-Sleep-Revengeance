@@ -14,7 +14,7 @@ mysql-connector-python = "^8.0.27"
 
 [tool.poetry.dev-dependencies]
 freezegun = "^1.1.0"
-coverage = "^6.0.2"
+coverage = "^6.1.1"
 flake8 = "^4.0.1"
 
 [build-system]
