@@ -3,6 +3,7 @@ import pathlib
 import os
 import sys
 import mysql.connector as mysql
+from .tracing import setup_tracer
 
 GTS_BOT_TOKEN = "GTS_BOT_TOKEN"
 GTS_MAPS_TOKEN = "GTS_MAPS_TOKEN"
@@ -52,6 +53,8 @@ def check_env_variable(variable_name: str, default_value = None):
 
 
 def handle_args():
+
+    setup_tracer()
 
     parser = init_argparse()
     args = parser.parse_args()
