@@ -225,7 +225,7 @@ grpc = ["grpcio (>=1.0.0)"]
 
 [[package]]
 name = "googlemaps"
-version = "4.5.3"
+version = "4.6.0"
 description = "Python client library for Google Maps Platform"
 category = "main"
 optional = false
@@ -572,7 +572,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "fa10bd5910dfbb90f4302a96c6670f242c62e45e9fc5c3780ca92c866dbc052b"
+content-hash = "e4aa29213a0d9ffa70c6d536c0ab994a63d82b5a45c92fb51cfd4bb120388048"
 
 [metadata.files]
 aiohttp = [
@@ -724,7 +724,7 @@ googleapis-common-protos = [
     {file = "googleapis_common_protos-1.53.0-py2.py3-none-any.whl", hash = "sha256:f6d561ab8fb16b30020b940e2dd01cd80082f4762fa9f3ee670f4419b4b8dbd0"},
 ]
 googlemaps = [
-    {file = "googlemaps-4.5.3.tar.gz", hash = "sha256:cd6a4bcf6fbdbbffeb5e4cffd7f9db223864cce96c9149fb48358b62050f3a2a"},
+    {file = "googlemaps-4.6.0.tar.gz", hash = "sha256:2cc88cdf206deccc18e7fdfd23a0ed244209a08b2f0561fd8739c4c277325241"},
 ]
 grpcio = [
     {file = "grpcio-1.42.0-cp310-cp310-linux_armv7l.whl", hash = "sha256:6e5eec67909795f7b1ff2bd941bd6c2661ca5217ea9c35003d73314100786f60"},
