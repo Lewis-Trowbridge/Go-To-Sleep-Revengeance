@@ -18,7 +18,7 @@ opentelemetry-instrumentation = "^0.26b1"
 opentelemetry-instrumentation-requests = "^0.26b1"
 
 [tool.poetry.dev-dependencies]
-freezegun = "^1.1.0"
+freezegun = "^1.2.0"
 coverage = "^6.2"
 flake8 = "^4.0.1"
 
